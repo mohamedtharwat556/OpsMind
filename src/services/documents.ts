@@ -113,7 +113,7 @@ export async function deleteDocument(id: string) {
   if (error) throw error
 }
 
-export async function createDocumentVersion(documentId: string, version: {
+export async function createDocumentVersion(_documentId: string, version: {
   version: string
   author_id: string
   notes: string
@@ -123,7 +123,7 @@ export async function createDocumentVersion(documentId: string, version: {
   const { data, error } = await supabase
     .from('document_versions')
     .insert({
-      document_id,
+      document_id: _documentId,
       ...version,
     })
     .select()
