@@ -70,8 +70,8 @@ export function AIKnowledge() {
         sources: relevantDocs.length > 0 ? relevantDocs.map(doc => ({
           id: doc.id,
           title: doc.title,
-          code: doc.code,
-          type: doc.type,
+          code: doc.code || 'N/A',
+          type: doc.type || 'Document',
           relevance: 0.9 - Math.random() * 0.2,
         })) : undefined,
       }
