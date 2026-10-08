@@ -224,29 +224,31 @@ export function Search() {
                         </div>
                         
                         <p className="text-xs text-slate-500 mb-2">
-                          <span dangerouslySetInnerHTML={{ __html: highlightText(doc.code) }} />
+                          <span dangerouslySetInnerHTML={{ __html: highlightText(doc.code || 'N/A') }} />
                           <span className="mx-1">•</span>
-                          {doc.version}
+                          {doc.version || 'v1.0'}
                           <span className="mx-1">•</span>
-                          {doc.users?.name || 'Unknown'}
+                          {doc.users?.name || 'Unknown Author'}
                         </p>
                         
                         <p 
                           className="text-xs text-slate-600 line-clamp-2"
-                          dangerouslySetInnerHTML={{ __html: highlightText(doc.description) }}
+                          dangerouslySetInnerHTML={{ __html: highlightText(doc.description || doc.content?.substring(0, 100) || 'No description available') }}
                         />
                         
                         {/* tags */}
                         {doc.tags && doc.tags.length > 0 && (
                           <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                            {doc.tags.slice(0, 3).map((tag: string, i: number) => (
-                              <span
-                                key={i}
-                                className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded"
-                                dangerouslySetInnerHTML={{ __html: highlightText(tag) }}
-                              />
+                            {doc.tags.slice(0, 3).map((tag: string | null, i: number) => (
+                              tag && (
+                                <span
+                                  key={i}
+                                  className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded"
+                                  dangerouslySetInnerHTML={{ __html: highlightText(tag) }}
+                                />
+                              )
                             ))}
-                            {doc.tags.length > 3 && (
+                            {doc.tags && doc.tags.length > 3 && (
                               <span className="text-xs text-slate-400">+{doc.tags.length - 3} more</span>
                             )}
                           </div>
