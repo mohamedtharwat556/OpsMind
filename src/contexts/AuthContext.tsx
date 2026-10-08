@@ -84,25 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
       }
     } catch (err) {
-      // Fallback: جيب البيانات من Supabase Auth مباشرة لو مفيش ريكورد في users table بنفس الـ id
-      console.warn('Failed to fetch user profile from users table, falling back to auth user:', err)
-      try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-        if (authUser) {
-          const emailName = authUser.email?.split('@')[0] || 'User'
-          const name = authUser.user_metadata?.name || emailName
-          setUser({
-            id: authUser.id,
-            email: authUser.email || '',
-            name: name,
-            role: 'Admin',
-            initials: name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2),
-            avatar_color: 'bg-purple-100 text-purple-700',
-          })
-        }
-      } catch (fallbackErr) {
-        console.error('Fallback auth also failed:', fallbackErr)
-      }
+      console.error('Failed to fetch user profile:', err)
+      setUser(null)
     } finally {
       setLoading(false)
     }
