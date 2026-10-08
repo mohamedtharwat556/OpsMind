@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { Login } from './pages/Login'
 import { Profile } from './pages/Profile'
 import { Dashboard } from './pages/Dashboard'
@@ -17,7 +18,8 @@ import { Administration } from './pages/Administration'
 
 function App() {
   return (
-    <BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={
@@ -44,7 +46,8 @@ function App() {
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
 

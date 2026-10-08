@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabase'
 import { Notifications } from '../Notifications'
+import { ThemeToggle } from '../ThemeToggle'
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -77,7 +78,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="h-14 bg-white border-b border-slate-200 flex-shrink-0 z-10">
+    <header className="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex-shrink-0 z-10">
       <div className="h-full px-4 lg:px-5 flex items-center justify-between gap-4">
 
         <div className="flex items-center gap-3 min-w-0">
@@ -102,21 +103,22 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
 
         {/* search bar */}
-        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-sm hidden md:block">
+        <form onSubmit={handleSearchSubmit} className="flex-1 max-w-lg hidden md:block">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4" />
             <input
               type="text"
               value={searchValue}
               onChange={e => setSearchValue(e.target.value)}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search SOPs, technical guides…"
-              className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-colors placeholder:text-slate-400"
+              className="w-full pl-9 pr-3 py-1.5 text-[13px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white dark:focus:bg-slate-700 transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-500 dark:text-slate-100"
             />
           </div>
         </form>
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          <ThemeToggle />
           <button
             onClick={() => navigate('/ai-knowledge')}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-medium rounded-lg transition-colors"
