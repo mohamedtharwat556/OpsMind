@@ -180,7 +180,7 @@ const documents = [
     id: 4,
     title: 'Device Maintenance Guidelines',
     code: 'ORG-102 • Hardware Maintenance & Care',
-    type: 'Org Info',
+    type: 'Organizational Information',
     typeColor: 'bg-slate-100 text-slate-600',
     version: 'v1.5',
     owner: 'Y. Hussein',
@@ -255,7 +255,7 @@ export function Dashboard() {
       sub: [
         `${documents.filter(d => d.type === 'SOP').length} SOPs`,
         `${documents.filter(d => d.type === 'Technical Document').length} Tech Docs`,
-        `${documents.filter(d => d.type === 'Org Info').length} Org Docs`,
+        `${documents.filter(d => d.type === 'Organizational Information').length} Org Docs`,
       ],
       icon: FolderKanban,
       iconBg: 'bg-teal-50',
@@ -264,7 +264,7 @@ export function Dashboard() {
       bar: [
         { label: 'SOPs', pct: documents.length > 0 ? Math.round((documents.filter(d => d.type === 'SOP').length / documents.length) * 100) : 0, color: 'bg-blue-500' },
         { label: 'Tech', pct: documents.length > 0 ? Math.round((documents.filter(d => d.type === 'Technical Document').length / documents.length) * 100) : 0, color: 'bg-teal-500' },
-        { label: 'Org', pct: documents.length > 0 ? Math.round((documents.filter(d => d.type === 'Org Info').length / documents.length) * 100) : 0, color: 'bg-slate-300' },
+        { label: 'Org', pct: documents.length > 0 ? Math.round((documents.filter(d => d.type === 'Organizational Information').length / documents.length) * 100) : 0, color: 'bg-slate-300' },
         { label: 'Other', pct: documents.length > 0 ? Math.round((documents.filter(d => d.type === 'Operational Case').length / documents.length) * 100) : 0, color: 'bg-purple-400' },
       ],
     },

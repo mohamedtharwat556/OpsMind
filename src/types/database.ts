@@ -34,6 +34,11 @@ export interface Document {
   updated_at: string
   file_path?: string
   file_name?: string
+  // Legacy aliases and additional fields
+  code?: string
+  type?: DocType
+  description?: string
+  tags?: string[]
 }
 
 export interface DocumentVersion {

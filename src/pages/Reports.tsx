@@ -63,7 +63,7 @@ export function Reports() {
     { type: 'SOP', count: filteredDocuments.filter(d => d.type === 'SOP').length, color: 'bg-blue-500' },
     { type: 'Technical Document', count: filteredDocuments.filter(d => d.type === 'Technical Document').length, color: 'bg-teal-500' },
     { type: 'Operational Case', count: filteredDocuments.filter(d => d.type === 'Operational Case').length, color: 'bg-orange-500' },
-    { type: 'Org Info', count: filteredDocuments.filter(d => d.type === 'Org Info').length, color: 'bg-slate-400' },
+    { type: 'Organizational Information', count: filteredDocuments.filter(d => d.type === 'Organizational Information').length, color: 'bg-slate-400' },
   ]
 
   const recentActivity = [

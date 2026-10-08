@@ -31,7 +31,7 @@ export function CreateDocument() {
       'SOP': 'SOP',
       'Technical Document': 'TG',
       'Operational Case': 'OC',
-      'Org Info': 'ORG',
+      'Organizational Information': 'ORG',
     }
     const prefix = prefixes[type]
     const num = Math.floor(100 + Math.random() * 900)

@@ -35,13 +35,24 @@ export function Header({ onMenuClick }: HeaderProps) {
   // Load initial unread count on mount
   useEffect(() => {
     if (!user?.id) return
-    void supabase
-      .from('notifications')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_read', false)
-      .then(({ count }) => setUnreadCount(count || 0))
-      .catch(() => {})
+    
+    const loadUnreadCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('notifications')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('is_read', false)
+        
+        if (!error) {
+          setUnreadCount(count || 0)
+        }
+      } catch {
+        // Silently fail
+      }
+    }
+    
+    loadUnreadCount()
   }, [user?.id])
 
   const handleLogout = async () => {

@@ -35,7 +35,7 @@ const DOC_TYPES: { label: string; value: DocType | 'All'; icon: React.ElementTyp
   { label: 'SOP', value: 'SOP', icon: FileCheck, color: 'text-blue-600' },
   { label: 'Technical Document', value: 'Technical Document', icon: BookOpen, color: 'text-teal-600' },
   { label: 'Operational Case', value: 'Operational Case', icon: Briefcase, color: 'text-orange-500' },
-  { label: 'Org Info', value: 'Org Info', icon: Building2, color: 'text-slate-500' },
+  { label: 'Organizational Information', value: 'Organizational Information', icon: Building2, color: 'text-slate-500' },
 ]
 
 const STATUS_STYLES: Record<DocStatus, string> = {
@@ -56,7 +56,7 @@ const TYPE_STYLES: Record<DocType, string> = {
   SOP: 'bg-blue-100 text-blue-700',
   'Technical Document': 'bg-teal-100 text-teal-700',
   'Operational Case': 'bg-orange-100 text-orange-700',
-  'Org Info': 'bg-slate-100 text-slate-600',
+  'Organizational Information': 'bg-slate-100 text-slate-600',
 }
 
 // row actions menu

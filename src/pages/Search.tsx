@@ -20,7 +20,7 @@ const TYPE_CONFIG: Record<DocType, { icon: React.ElementType; color: string; lab
   SOP: { icon: FileText, color: 'bg-blue-100 text-blue-700', label: 'SOP' },
   'Technical Document': { icon: BookOpen, color: 'bg-teal-100 text-teal-700', label: 'Technical' },
   'Operational Case': { icon: Briefcase, color: 'bg-orange-100 text-orange-700', label: 'Case' },
-  'Org Info': { icon: Building2, color: 'bg-slate-100 text-slate-600', label: 'Org' },
+  'Organizational Information': { icon: Building2, color: 'bg-slate-100 text-slate-600', label: 'Org' },
 }
 
 export function Search() {
@@ -129,7 +129,7 @@ export function Search() {
       {/* type filter */}
       <div className="flex items-center gap-1.5 flex-wrap">
         <Filter className="w-4 h-4 text-slate-400" />
-        {(['All', 'SOP', 'Technical Document', 'Operational Case', 'Org Info'] as const).map(type => (
+        {(['All', 'SOP', 'Technical Document', 'Operational Case', 'Organizational Information'] as const).map(type => (
           <button
             key={type}
             onClick={() => setActiveType(type as DocType | 'All')}
