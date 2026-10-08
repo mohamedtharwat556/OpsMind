@@ -193,6 +193,12 @@ export async function getDocumentsByStatus(status: DocStatus): Promise<DocumentW
 }
 
 export async function searchDocuments(query: string): Promise<DocumentWithOwner[]> {
+  if (!query || query.trim() === '') {
+    return getDocuments()
+  }
+
+  const searchTerm = `%${query}%`
+  
   const { data, error } = await supabase
     .from('documents')
     .select(`
@@ -203,9 +209,13 @@ export async function searchDocuments(query: string): Promise<DocumentWithOwner[
         avatar_color
       )
     `)
-    .or(`title.ilike.%${query}%,code.ilike.%${query}%,description.ilike.%${query}%,content.ilike.%${query}%`)
+    .or(`title.ilike.${searchTerm},code.ilike.${searchTerm},description.ilike.${searchTerm},content.ilike.${searchTerm}`)
     .order('updated_at', { ascending: false })
 
-  if (error) throw error
+  if (error) {
+    console.error('Search error:', error)
+    throw error
+  }
+  
   return data as DocumentWithOwner[]
 }
