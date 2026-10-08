@@ -190,6 +190,12 @@ export function Search() {
             <div className="space-y-3">
               {filteredDocs.map(doc => {
                 const typeConfig = TYPE_CONFIG[doc.type]
+                
+                // Skip if type config not found
+                if (!typeConfig) {
+                  return null
+                }
+                
                 const TypeIcon = typeConfig.icon
                 
                 // Highlight matching text
@@ -276,6 +282,12 @@ export function Search() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {documents.slice(0, 6).map(doc => {
               const typeConfig = TYPE_CONFIG[doc.type]
+              
+              // Skip if type config not found
+              if (!typeConfig) {
+                return null
+              }
+              
               const TypeIcon = typeConfig.icon
 
               return (
