@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getDocuments, searchDocuments } from '../services/documents'
+import { AdvancedSearchFilters, type AdvancedFiltersState } from '../components/AdvancedSearchFilters'
 import type { DocType } from '../types/database'
 import {
   Search as SearchIcon,
@@ -28,6 +29,15 @@ export function Search() {
   const [searchParams] = useSearchParams()
   const [query, setQuery] = useState(searchParams.get('q') || '')
   const [activeType, setActiveType] = useState<DocType | 'All'>('All')
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFiltersState>({
+    type: 'All',
+    status: 'All',
+    owner: '',
+    dateFrom: '',
+    dateTo: '',
+    versionMin: 0,
+  })
   const [recentSearches, setRecentSearches] = useState<string[]>(['POS installation', 'printer troubleshooting', 'network issues'])
   const [documents, setDocuments] = useState<any[]>([])
   const [searchResults, setSearchResults] = useState<any[]>([])
@@ -129,6 +139,13 @@ export function Search() {
       {/* type filter */}
       <div className="flex items-center gap-1.5 flex-wrap">
         <Filter className="w-4 h-4 text-slate-400" />
+        <button
+          onClick={() => setShowAdvancedFilters(true)}
+          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+        >
+          <Filter className="w-3 h-3" />
+          Advanced Filters
+        </button>
         {(['All', 'SOP', 'Technical Document', 'Operational Case', 'Organizational Information'] as const).map(type => (
           <button
             key={type}
@@ -309,6 +326,14 @@ export function Search() {
           </div>
         </div>
       )}
+
+      {/* Advanced Filters Modal */}
+      <AdvancedSearchFilters
+        isOpen={showAdvancedFilters}
+        onClose={() => setShowAdvancedFilters(false)}
+        onApply={setAdvancedFilters}
+        currentFilters={advancedFilters}
+      />
     </div>
   )
 }

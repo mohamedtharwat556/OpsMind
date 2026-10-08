@@ -1,49 +1,36 @@
 import { useState, useEffect } from 'react'
 
-type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl'
-
-interface ResponsiveSize {
-  isSmall: boolean
-  isMedium: boolean
-  isLarge: boolean
-  isXLarge: boolean
-  is2XLarge: boolean
-  breakpoint: Breakpoint | null
+interface ScreenSize {
+  isMobile: boolean
+  isTablet: boolean
+  isDesktop: boolean
+  width: number
+  height: number
 }
 
-export function useResponsive(): ResponsiveSize {
-  const [size, setSize] = useState<ResponsiveSize>({
-    isSmall: false,
-    isMedium: false,
-    isLarge: false,
-    isXLarge: false,
-    is2XLarge: false,
-    breakpoint: null,
+export function useResponsive(): ScreenSize {
+  const [screenSize, setScreenSize] = useState<ScreenSize>({
+    isMobile: typeof window !== 'undefined' && window.innerWidth < 768,
+    isTablet: typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1024,
+    isDesktop: typeof window !== 'undefined' && window.innerWidth >= 1024,
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
   })
 
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth
-      setSize({
-        isSmall: width >= 640,
-        isMedium: width >= 768,
-        isLarge: width >= 1024,
-        isXLarge: width >= 1280,
-        is2XLarge: width >= 1536,
-        breakpoint:
-          width >= 1536 ? '2xl' :
-          width >= 1280 ? 'xl' :
-          width >= 1024 ? 'lg' :
-          width >= 768 ? 'md' :
-          width >= 640 ? 'sm' :
-          null,
+      setScreenSize({
+        isMobile: window.innerWidth < 768,
+        isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
+        isDesktop: window.innerWidth >= 1024,
+        width: window.innerWidth,
+        height: window.innerHeight,
       })
     }
 
-    handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  return size
+  return screenSize
 }

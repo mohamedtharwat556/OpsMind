@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { Login } from './pages/Login'
 import { Profile } from './pages/Profile'
@@ -18,8 +19,9 @@ import { Administration } from './pages/Administration'
 
 function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={
@@ -48,6 +50,7 @@ function App() {
       </Routes>
       </BrowserRouter>
     </ThemeProvider>
+    </ErrorBoundary>
   )
 }
 
