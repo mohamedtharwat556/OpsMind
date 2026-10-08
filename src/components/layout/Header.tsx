@@ -35,7 +35,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   // Load initial unread count on mount
   useEffect(() => {
     if (!user?.id) return
-    supabase
+    void supabase
       .from('notifications')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
