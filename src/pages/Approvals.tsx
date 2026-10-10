@@ -73,7 +73,7 @@ export function Approvals() {
     const doc = documents.find(d => d.id === selectedDoc)
     try {
       setActionLoading(true)
-      await approveDocument(selectedDoc, remarks)
+      await approveDocument(selectedDoc, remarks, user?.id)
       await logActivity({
         user_id: user?.id,
         action: 'approve',
@@ -100,7 +100,7 @@ export function Approvals() {
     const doc = documents.find(d => d.id === selectedDoc)
     try {
       setActionLoading(true)
-      await rejectDocument(selectedDoc, remarks)
+      await rejectDocument(selectedDoc, remarks, user?.id)
       await logActivity({
         user_id: user?.id,
         action: 'reject',

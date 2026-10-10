@@ -1,7 +1,25 @@
 import { supabase } from '../lib/supabase'
 import type { UserRole } from '../types/database'
 
-export async function signUp(email: string, password: string, name: string, role: UserRole = 'Support Agent') {
+export async function signUp(email: string, password: string, name: string, role: UserRole = 'Support Agent', currentUserId?: string) {
+  // Authorization check: Only Admins can create accounts
+  if (currentUserId) {
+    const { data: admin, error: adminError } = await supabase
+      .from('users')
+      .select('roles:role_id(name)')
+      .eq('id', currentUserId)
+      .single()
+
+    if (adminError || !admin) {
+      throw new Error('User not found')
+    }
+
+    const adminRole = (admin.roles as any)?.name
+    if (adminRole !== 'Admin') {
+      throw new Error('Only Admins can create user accounts')
+    }
+  }
+
   // First, create auth user
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,

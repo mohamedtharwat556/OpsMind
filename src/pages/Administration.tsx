@@ -88,7 +88,7 @@ export function Administration() {
     try {
       setAddingUser(true)
       setAddUserError(null)
-      await signUp(newUserForm.email, newUserForm.password, newUserForm.name, newUserForm.role as any)
+      await signUp(newUserForm.email, newUserForm.password, newUserForm.name, newUserForm.role as any, currentUser?.id)
       await logActivity({
         user_id: currentUser?.id,
         action: 'create',

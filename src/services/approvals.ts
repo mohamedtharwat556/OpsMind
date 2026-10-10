@@ -30,7 +30,25 @@ async function insertNotification(userId: string, type: string, title: string, m
   })
 }
 
-export async function approveDocument(documentId: string, remarks?: string) {
+export async function approveDocument(documentId: string, remarks?: string, currentUserId?: string) {
+  // Authorization check: Verify caller is Manager or Admin
+  if (currentUserId) {
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('roles:role_id(name)')
+      .eq('id', currentUserId)
+      .single()
+
+    if (userError || !user) {
+      throw new Error('User not found')
+    }
+
+    const userRole = (user.roles as any)?.name
+    if (!userRole || !['Manager', 'Admin'].includes(userRole)) {
+      throw new Error('Only Managers and Admins can approve documents')
+    }
+  }
+
   const { error: docError } = await supabase
     .from('documents')
     .update({ status: 'Approved' })
@@ -68,7 +86,25 @@ export async function approveDocument(documentId: string, remarks?: string) {
   }
 }
 
-export async function rejectDocument(documentId: string, remarks?: string) {
+export async function rejectDocument(documentId: string, remarks?: string, currentUserId?: string) {
+  // Authorization check: Verify caller is Manager or Admin
+  if (currentUserId) {
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('roles:role_id(name)')
+      .eq('id', currentUserId)
+      .single()
+
+    if (userError || !user) {
+      throw new Error('User not found')
+    }
+
+    const userRole = (user.roles as any)?.name
+    if (!userRole || !['Manager', 'Admin'].includes(userRole)) {
+      throw new Error('Only Managers and Admins can reject documents')
+    }
+  }
+
   const { error: docError } = await supabase
     .from('documents')
     .update({ status: 'Rejected' })
