@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseError } from '../lib/supabase'
+import { ConfigurationError } from '../components/ConfigurationError'
 
 interface User {
   id: string
@@ -18,6 +19,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   hasRole: (role: string) => boolean
   hasPermission: (permission: string) => boolean
+  configError: string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -25,16 +27,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [configError] = useState<string | null>(supabaseError || null)
+
+  // If Supabase is not configured, show error UI
+  if (configError) {
+    return <ConfigurationError message={configError} />
+  }
+
+  // If supabase client is not available, show error
+  if (!supabase) {
+    return <ConfigurationError message="Failed to initialize Supabase client." />
+  }
 
   useEffect(() => {
-    // Check if Supabase is configured
-    const isSupabaseConfigured = import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_URL !== 'YOUR_SUPABASE_URL'
-
-    if (!isSupabaseConfigured) {
-      setLoading(false)
-      return
-    }
-
     // Check for existing Supabase session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -92,25 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    // Check if Supabase is configured
-    if (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-      // Fall back to mock auth for development
-      if (email === 'admin@opsmind.com' && password === 'admin123') {
-        const mockUser: User = {
-          id: '1',
-          email: email,
-          name: 'System Admin',
-          role: 'Admin',
-          initials: 'SA',
-          avatar_color: 'bg-purple-100 text-purple-700'
-        }
-        setUser(mockUser)
-        return
-      }
-      throw new Error('Invalid credentials')
-    }
-
-    // Use Supabase auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -124,15 +110,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = async () => {
-    // Check if using mock auth
-    if (!import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-      setUser(null)
-      return
-    }
+    const { error } = await supabase.auth.signOut()
 
-    // Use Supabase auth
-    await supabase.auth.signOut()
+    // Always clear local state
     setUser(null)
+
+    // If signOut failed, throw error so caller knows
+    if (error) {
+      throw error
+    }
   }
 
   const hasRole = (role: string): boolean => {
@@ -160,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         hasRole,
         hasPermission,
+        configError,
       }}
     >
       {children}

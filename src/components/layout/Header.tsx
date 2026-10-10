@@ -57,8 +57,15 @@ export function Header({ onMenuClick }: HeaderProps) {
   }, [user?.id])
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login')
+    try {
+      await logout()
+      navigate('/login')
+    } catch (err) {
+      console.error('Logout failed:', err)
+      // Even if logout fails, navigate to login
+      // (the user can try to login again)
+      navigate('/login')
+    }
   }
 
   const handleSearchSubmit = (e: React.FormEvent) => {
