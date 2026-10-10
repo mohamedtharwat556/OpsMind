@@ -82,8 +82,8 @@ export function Search() {
 
   const applyFilters = (docs: any[]) => {
     return docs.filter(doc => {
-      // Type filter
-      const matchType = advancedFilters.type === 'All' || doc.category === advancedFilters.type
+      // Type filter (use doc.type, not doc.category)
+      const matchType = advancedFilters.type === 'All' || doc.type === advancedFilters.type
       
       // Status filter
       const matchStatus = advancedFilters.status === 'All' || doc.status === advancedFilters.status
