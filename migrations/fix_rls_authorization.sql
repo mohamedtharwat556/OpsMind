@@ -1,7 +1,17 @@
--- OpsMind v2.2 — Authorization RLS Fixes and Enhancements
+-- OpsMind v2.2 — Authorization RLS Fixes and Enhancements (NO RECURSION)
 -- This migration corrects RLS policies and adds critical authorization checks
 -- Date: 2026-10-09
 -- Purpose: Fix column name mismatches (author_id vs owner_id) and add role-based restrictions
+-- NOTE: Admin role UUID hardcoded to avoid recursive policy loops
+
+-- Admin Role UUID (from roles table)
+-- df3c8c1e-65c0-4a66-b502-006bfb20841e
+
+-- Manager Role UUID (from roles table)
+-- 6b209b44-e0ae-49eb-8da9-537bb99ba49c
+
+-- Support Agent Role UUID (from roles table)
+-- f73017eb-727a-484b-8459-ea548f76cdf8
 
 -- ============================================================
 -- 1. USERS TABLE — RESTRICT ACCOUNT CREATION TO ADMINS ONLY
@@ -15,8 +25,7 @@ FOR INSERT
 WITH CHECK (
   auth.uid() IN (
     SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name = 'Admin'
+    WHERE u.role_id = 'df3c8c1e-65c0-4a66-b502-006bfb20841e'  -- Admin only
   )
 );
 
@@ -39,8 +48,7 @@ FOR UPDATE
 USING (
   auth.uid() IN (
     SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name = 'Admin'
+    WHERE u.role_id = 'df3c8c1e-65c0-4a66-b502-006bfb20841e'  -- Admin only
   )
 );
 
@@ -79,8 +87,10 @@ USING (
   -- Managers/Admins can update any document
   (auth.uid() IN (
     SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name IN ('Manager', 'Admin')
+    WHERE u.role_id IN (
+      'df3c8c1e-65c0-4a66-b502-006bfb20841e',  -- Admin
+      '6b209b44-e0ae-49eb-8da9-537bb99ba49c'   -- Manager
+    )
   ))
 );
 
@@ -91,8 +101,7 @@ FOR DELETE
 USING (
   auth.uid() IN (
     SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name = 'Admin'
+    WHERE u.role_id = 'df3c8c1e-65c0-4a66-b502-006bfb20841e'  -- Admin only
   )
 );
 
@@ -127,8 +136,10 @@ FOR INSERT
 WITH CHECK (
   auth.uid() IN (
     SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name IN ('Manager', 'Admin')
+    WHERE u.role_id IN (
+      'df3c8c1e-65c0-4a66-b502-006bfb20841e',  -- Admin
+      '6b209b44-e0ae-49eb-8da9-537bb99ba49c'   -- Manager
+    )
   )
 );
 
@@ -222,28 +233,16 @@ FOR UPDATE
 USING (auth.uid() = user_id);
 
 -- ============================================================
--- 7. ROLES TABLE — FIX ADMIN CHECK
+-- 7. ROLES TABLE — ALLOW VIEW ONLY (NO WRITE POLICIES)
 -- ============================================================
 
 ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
 
--- All authenticated users can view roles
+-- All authenticated users can view roles (simple, no recursion)
 DROP POLICY IF EXISTS "users_can_view_roles" ON roles;
 CREATE POLICY "users_can_view_roles" ON roles
 FOR SELECT
 USING (true);
-
--- Only admins can manage roles (use role_id JOIN)
-DROP POLICY IF EXISTS "admins_can_manage_roles_v2" ON roles;
-CREATE POLICY "admins_can_manage_roles_v2" ON roles
-FOR ALL
-USING (
-  auth.uid() IN (
-    SELECT u.id FROM users u
-    JOIN roles r ON u.role_id = r.id
-    WHERE r.name = 'Admin'
-  )
-);
 
 -- ============================================================
 -- SUMMARY OF CHANGES
@@ -254,9 +253,8 @@ USING (
 -- ✅ Document INSERT: Fixed to use owner_id (not author_id)
 -- ✅ Document UPDATE: Restricted to owner (draft) OR Manager/Admin
 -- ✅ Document DELETE: Restricted to Admin only
--- ✅ Column mismatch: author_id → owner_id in RLS checks
--- ✅ Role lookup: users.role string → users.role_id JOIN (all policies)
--- ✅ Approval authorization: Manager/Admin verification in INSERT and UPDATE
+-- ✅ No recursion: Role UUIDs hardcoded, not fetched via JOIN
+-- ✅ Approval authorization: Manager/Admin verification
 -- ✅ Support Agent restrictions: Can only edit own drafts
 --
 -- Testing matrix:
