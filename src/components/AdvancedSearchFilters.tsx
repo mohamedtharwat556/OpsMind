@@ -29,7 +29,7 @@ export function AdvancedSearchFilters({
 }: AdvancedFiltersProps) {
   if (!isOpen) return null
 
-  const [filters, setFilters] = React.useState<AdvancedFiltersState>(currentFilters)
+  const [filters, setFilters] = useState<AdvancedFiltersState>(currentFilters)
 
   const handleReset = () => {
     setFilters({
@@ -170,5 +170,3 @@ export function AdvancedSearchFilters({
     </div>
   )
 }
-
-import React from 'react'

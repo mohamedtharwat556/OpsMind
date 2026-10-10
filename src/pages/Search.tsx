@@ -80,10 +80,33 @@ export function Search() {
     return () => clearTimeout(debounceTimer)
   }, [query])
 
-  const filteredDocs = searchResults.length > 0 ? searchResults : documents.filter(doc => {
-    const matchType = activeType === 'All' || doc.type === activeType
-    return matchType
-  })
+  const applyFilters = (docs: any[]) => {
+    return docs.filter(doc => {
+      // Type filter
+      const matchType = advancedFilters.type === 'All' || doc.category === advancedFilters.type
+      
+      // Status filter
+      const matchStatus = advancedFilters.status === 'All' || doc.status === advancedFilters.status
+      
+      // Owner filter
+      const matchOwner = !advancedFilters.owner || 
+        (doc.users?.name?.toLowerCase().includes(advancedFilters.owner.toLowerCase()))
+      
+      // Date range filter
+      const docDate = new Date(doc.created_at)
+      const matchDateFrom = !advancedFilters.dateFrom || docDate >= new Date(advancedFilters.dateFrom)
+      const matchDateTo = !advancedFilters.dateTo || docDate <= new Date(advancedFilters.dateTo)
+      
+      // Version filter
+      const matchVersion = !advancedFilters.versionMin || (doc.version || 1) >= advancedFilters.versionMin
+      
+      return matchType && matchStatus && matchOwner && matchDateFrom && matchDateTo && matchVersion
+    })
+  }
+
+  const filteredDocs = applyFilters(
+    searchResults.length > 0 ? searchResults : documents
+  )
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
